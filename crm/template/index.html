@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate CRM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links li {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links li:hover, .nav-links li.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .page {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .property-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .property-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .property-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-available { background: #d4edda; color: #155724; }
+        .status-sold { background: #f8d7da; color: #721c24; }
+        .status-pending { background: #fff3cd; color: #856404; }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-left: 4px solid #667eea;
+            margin-bottom: 1rem;
+            background: #f8f9fa;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .activity-icon {
+            margin-right: 1rem;
+            color: #667eea;
+        }
+
+        .activity-content h4 {
+            margin-bottom: 0.25rem;
+            color: #333;
+        }
+
+        .activity-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-section {
+            margin-bottom: 2rem;
+        }
+
+        .report-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="logo">
+                    <i class="fas fa-home"></i> Real Estate CRM
+                </div>
+                <ul class="nav-links">
+                    <li onclick="showPage('dashboard')" class="active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </li>
+                    <li onclick="showPage('clients')">
+                        <i class="fas fa-users"></i> Clients
+                    </li>
+                    <li onclick="showPage('properties')">
+                        <i class="fas fa-building"></i> Properties
+                    </li>
+                    <li onclick="showPage('leads')">
+                        <i class="fas fa-chart-line"></i> Leads
+                    </li>
+                    <li onclick="showPage('reports')">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalClients">0</div>
+                    <div>Total Clients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalProperties">0</div>
+                    <div>Properties</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeLeads">0</div>
+                    <div>Active Leads</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="salesThisMonth">$0</div>
+                    <div>Sales This Month</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Recent Activity</h3>
+                <div id="recentActivity">
+                    <!-- Activity items will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Page -->
+        <div id="clients" class="page">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1><i class="fas fa-users"></i> Clients</h1>
+                <button class="btn" onclick="openAddClientModal()">
+                    <i class="fas fa-plus"></i> Add Client
+                </button>
+            </div>
+
+            <input type="text" class="search-bar" id="clientSearch" placeholder="Search clients..." onkeyup="searchClients()">
+
+            <table id="clientsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTableBody">
+                    <!-- Client rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Properties Page -->
+        <div id="properties" class="page">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1><i class="fas fa-building"></i> Properties</h1>
+                <button class="btn" onclick="openAddPropertyModal()">
+                    <i class="fas fa-plus"></i> Add Property
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Property Type</label>
+                    <select id="propertyTypeFilter" onchange="filterProperties()">
+                        <option value="">All Types</option>
+                        <option value="house">House</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="condo">Condo</option>
+                        <option value="commercial">Commercial</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="propertyStatusFilter" onchange="filterProperties()">
+                        <option value="">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="pending">Pending</option>
+                        <option value="sold">Sold</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Price Range</label>
+                    <select id="priceRangeFilter" onchange="filterProperties()">
+                        <option value="">All Prices</option>
+                        <option value="0-100000">Under $100K</option>
+                        <option value="100000-250000">$100K - $250K</option>
+                        <option value="250000-500000">$250K - $500K</option>
+                        <option value="500000-1000000">$500K - $1M</option>
+                        <option value="1000000-999999999">Over $1M</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="propertiesContainer">
+                <!-- Property cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- Leads Page -->
+        <div id="leads" class="page">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1><i class="fas fa-chart-line"></i> Leads</h1>
+                <button class="btn" onclick="openAddLeadModal()">
+                    <i class="fas fa-plus"></i> Add Lead
+                </button>
+            </div>
+
+            <input type="text" class="search-bar" id="leadSearch" placeholder="Search leads..." onkeyup="searchLeads()">
+
+            <table id="leadsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Interest</th>
+                        <th>Status</th>
+                        <th>Source</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="leadsTableBody">
+                    <!-- Lead rows will be populated here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reports" class="page">
+            <h1><i class="fas fa-chart-bar"></i> Reports</h1>
+
+            <div class="report-section">
+                <h3>Sales Summary</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalSales">$0</div>
+                        <div>Total Sales</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgSalePrice">$0</div>
+                        <div>Average Sale Price</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="propertiesSold">0</div>
+                        <div>Properties Sold</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="conversionRate">0%</div>
+                        <div>Lead Conversion Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h3>Property Type Distribution</h3>
+                <div id="propertyTypeChart" class="chart-container">
+                    <!-- Chart will be populated here -->
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h3>Monthly Performance</h3>
+                <div id="monthlyChart" class="chart-container">
+                    <!-- Chart will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Client Modal -->
+    <div id="addClientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addClientModal')">&times;</span>
+            <h2>Add New Client</h2>
+            <form id="addClientForm">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="clientName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="clientEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="clientPhone">
+                </div>
+                <div class="form-group">
+                    <label>Client Type</label>
+                    <select id="clientType">
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                        <option value="both">Both</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="clientStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="prospect">Prospect</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="clientNotes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn">Add Client</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addClientModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Property Modal -->
+    <div id="addPropertyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addPropertyModal')">&times;</span>
+            <h2>Add New Property</h2>
+            <form id="addPropertyForm">
+                <div class="form-group">
+                    <label>Address *</label>
+                    <input type="text" id="propertyAddress" required>
+                </div>
+                <div class="form-group">
+                    <label>Price *</label>
+                    <input type="number" id="propertyPrice" required>
+                </div>
+                <div class="form-group">
+                    <label>Property Type</label>
+                    <select id="propertyType">
+                        <option value="house">House</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="condo">Condo</option>
+                        <option value="commercial">Commercial</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Bedrooms</label>
+                    <input type="number" id="propertyBedrooms" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Bathrooms</label>
+                    <input type="number" id="propertyBathrooms" min="0" step="0.5">
+                </div>
+                <div class="form-group">
+                    <label>Square Feet</label>
+                    <input type="number" id="propertySquareFeet">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="propertyStatus">
+                        <option value="available">Available</option>
+                        <option value="pending">Pending</option>
+                        <option value="sold">Sold</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="propertyDescription" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn">Add Property</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addPropertyModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Lead Modal -->
+    <div id="addLeadModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addLeadModal')">&times;</span>
+            <h2>Add New Lead</h2>
+            <form id="addLeadForm">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="leadName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="leadEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="leadPhone">
+                </div>
+                <div class="form-group">
+                    <label>Interest</label>
+                    <input type="text" id="leadInterest" placeholder="e.g., 3BR house in downtown">
+                </div>
+                <div class="form-group">
+                    <label>Budget</label>
+                    <input type="number" id="leadBudget">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="leadStatus">
+                        <option value="new">New</option>
+                        <option value="contacted">Contacted</option>
+                        <option value="qualified">Qualified</option>
+                        <option value="converted">Converted</option>
+                        <option value="lost">Lost</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Source</label>
+                    <select id="leadSource">
+                        <option value="website">Website</option>
+                        <option value="referral">Referral</option>
+                        <option value="social-media">Social Media</option>
+                        <option value="advertisement">Advertisement</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="leadNotes" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn">Add Lead</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addLeadModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data storage (using in-memory storage instead of localStorage)
+        let crmData = {
+            clients: [],
+            properties: [],
+            leads: [],
+            activities: []
+        };
+
+        // Initialize with sample data
+        function initializeSampleData() {
+            // Sample clients
+            crmData.clients = [
+                {
+                    id: 1,
+                    name: "John Smith",
+                    email: "john.smith@email.com",
+                    phone: "(555) 123-4567",
+                    type: "buyer",
+                    status: "active",
+                    notes: "Looking for a family home",
+                    dateAdded: new Date('2024-01-15')
+                },
+                {
+                    id: 2,
+                    name: "Sarah Johnson",
+                    email: "sarah.j@email.com",
+                    phone: "(555) 987-6543",
+                    type: "seller",
+                    status: "active",
+                    notes: "Selling downtown condo",
+                    dateAdded: new Date('2024-02-20')
+                }
+            ];
+
+            // Sample properties
+            crmData.properties = [
+                {
+                    id: 1,
+                    address: "123 Main St, Anytown, ST 12345",
+                    price: 350000,
+                    type: "house",
+                    bedrooms: 3,
+                    bathrooms: 2,
+                    squareFeet: 1800,
+                    status: "available",
+                    description: "Beautiful family home with updated kitchen",
+                    dateAdded: new Date('2024-01-10')
+                },
+                {
+                    id: 2,
+                    address: "456 Oak Ave, Downtown, ST 12345",
+                    price: 225000,
+                    type: "condo",
+                    bedrooms: 2,
+                    bathrooms: 1,
+                    squareFeet: 950,
+                    status: "pending",
+                    description: "Modern condo in heart of downtown",
+                    dateAdded: new Date('2024-02-15')
+                }
+            ];
+
+            // Sample leads
+            crmData.leads = [
+                {
+                    id: 1,
+                    name: "Mike Davis",
+                    email: "mike.davis@email.com",
+                    phone: "(555) 456-7890",
+                    interest: "3BR house under $400K",
+                    budget: 400000,
+                    status: "qualified",
+                    source: "website",
+                    notes: "First-time buyer",
+                    dateAdded: new Date('2024-03-01')
+                },
+                {
+                    id: 2,
+                    name: "Lisa Chen",
+                    email: "lisa.chen@email.com",
+                    phone: "(555) 321-0987",
+                    interest: "Investment property",
+                    budget: 500000,
+                    status: "new",
+                    source: "referral",
+                    notes: "Looking for rental property",
+                    dateAdded: new Date('2024-03-05')
+                }
+            ];
+
+            // Sample activities
+            crmData.activities = [
+                {
+                    id: 1,
+                    type: "client_added",
+                    description: "New client John Smith added",
+                    timestamp: new Date('2024-01-15'),
+                    icon: "fa-user-plus"
+                },
+                {
+                    id: 2,
+                    type: "property_added",
+                    description: "New property listed at 123 Main St",
+                    timestamp: new Date('2024-01-10'),
+                    icon: "fa-home"
+                }
+            ];
+
+            // Update displays
+            updateDashboard();
+            displayClients();
+            displayProperties();
+            displayLeads();
+            updateReports();
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from nav links
+            document.querySelectorAll('.nav-links li').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.target.closest('li').classList.add('active');
+        }
+
+        // Dashboard functions
+        function updateDashboard() {
+            document.getElementById('totalClients').textContent = crmData.clients.length;
+            document.getElementById('totalProperties').textContent = crmData.properties.length;
+            document.getElementById('activeLeads').textContent = crmData.leads.filter(lead => ['new', 'contacted', 'qualified'].includes(lead.status)).length;
+            
+            const soldProperties = crmData.properties.filter(prop => prop.status === 'sold');
+            const salesThisMonth = soldProperties.reduce((total, prop) => total + prop.price, 0);
+            document.getElementById('salesThisMonth').textContent = `$${salesThisMonth.toLocaleString()}`;
+            
+            displayRecentActivity();
+        }
+
+        function displayRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            const sortedActivities = crmData.activities.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
+            
+            if (sortedActivities.length === 0) {
+                container.innerHTML = '<p>No recent activity</p>';
+                return;
+            }
+            
+            container.innerHTML = sortedActivities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas ${activity.icon}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <h4>${activity.description}</h4>
+                        <div class="activity-time">${formatDate(activity.timestamp)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Client functions
+        function displayClients() {
+            const tbody = document.getElementById('clientsTableBody');
+            tbody.innerHTML = crmData.clients.map(client => `
+                <tr>
+                    <td>${client.name}</td>
+                    <td>${client.email}</td>
+                    <td>${client.phone || 'N/A'}</td>
+                    <td>${capitalizeFirst(client.type)}</td>
+                    <td><span class="property-status status-${client.status}">${capitalizeFirst(client.status)}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editClient(${client.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteClient(${client.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchClients() {
+            const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+            const filteredClients = crmData.clients.filter(client => 
+                client.name.toLowerCase().includes(searchTerm) ||
+                client.email.toLowerCase().includes(searchTerm) ||
+                (client.phone && client.phone.includes(searchTerm))
+            );
+            
+            const tbody = document.getElementById('clientsTableBody');
+            tbody.innerHTML = filteredClients.map(client => `
+                <tr>
+                    <td>${client.name}</td>
+                    <td>${client.email}</td>
+                    <td>${client.phone || 'N/A'}</td>
+                    <td>${capitalizeFirst(client.type)}</td>
+                    <td><span class="property-status status-${client.status}">${capitalizeFirst(client.status)}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editClient(${client.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteClient(${client.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddClientModal() {
+            document.getElementById('addClientModal').style.display = 'block';
+        }
+
+        function addClient(clientData) {
+            const newClient = {
+                id: Date.now(),
+                ...clientData,
+                dateAdded: new Date()
+            };
+            crmData.clients.push(newClient);
+            
+            // Add activity
+            crmData.activities.push({
+                id: Date.now() + 1,
+                type: 'client_added',
+                description: `New client ${newClient.name} added`,
+                timestamp: new Date(),
+                icon: 'fa-user-plus'
+            });
+            
+            displayClients();
+            updateDashboard();
+            closeModal('addClientModal');
+            document.getElementById('addClientForm').reset();
+        }
+
+        function editClient(clientId) {
+            const client = crmData.clients.find(c => c.id === clientId);
+            if (client) {
+                // Populate form with client data
+                document.getElementById('clientName').value = client.name;
+                document.getElementById('clientEmail').value = client.email;
+                document.getElementById('clientPhone').value = client.phone || '';
+                document.getElementById('clientType').value = client.type;
+                document.getElementById('clientStatus').value = client.status;
+                document.getElementById('clientNotes').value = client.notes || '';
+                
+                // Change form submit to update instead of add
+                const form = document.getElementById('addClientForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    updateClient(clientId);
+                };
+                
+                document.querySelector('#addClientModal h2').textContent = 'Edit Client';
+                document.querySelector('#addClientModal button[type="submit"]').textContent = 'Update Client';
+                document.getElementById('addClientModal').style.display = 'block';
+            }
+        }
+
+        function updateClient(clientId) {
+            const clientIndex = crmData.clients.findIndex(c => c.id === clientId);
+            if (clientIndex !== -1) {
+                crmData.clients[clientIndex] = {
+                    ...crmData.clients[clientIndex],
+                    name: document.getElementById('clientName').value,
+                    email: document.getElementById('clientEmail').value,
+                    phone: document.getElementById('clientPhone').value,
+                    type: document.getElementById('clientType').value,
+                    status: document.getElementById('clientStatus').value,
+                    notes: document.getElementById('clientNotes').value
+                };
+                
+                displayClients();
+                closeModal('addClientModal');
+                resetAddClientForm();
+            }
+        }
+
+        function deleteClient(clientId) {
+            if (confirm('Are you sure you want to delete this client?')) {
+                crmData.clients = crmData.clients.filter(c => c.id !== clientId);
+                displayClients();
+                updateDashboard();
+            }
+        }
+
+        function resetAddClientForm() {
+            document.getElementById('addClientForm').onsubmit = function(e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const clientData = {
+                    name: document.getElementById('clientName').value,
+                    email: document.getElementById('clientEmail').value,
+                    phone: document.getElementById('clientPhone').value,
+                    type: document.getElementById('clientType').value,
+                    status: document.getElementById('clientStatus').value,
+                    notes: document.getElementById('clientNotes').value
+                };
+                addClient(clientData);
+            };
+            document.querySelector('#addClientModal h2').textContent = 'Add New Client';
+            document.querySelector('#addClientModal button[type="submit"]').textContent = 'Add Client';
+        }
+
+        // Property functions
+        function displayProperties() {
+            const container = document.getElementById('propertiesContainer');
+            container.innerHTML = crmData.properties.map(property => `
+                <div class="property-card">
+                    <div class="property-header">
+                        <div>
+                            <div class="property-price">${property.price.toLocaleString()}</div>
+                            <div style="color: #666; margin-top: 0.25rem;">${property.address}</div>
+                        </div>
+                        <span class="property-status status-${property.status}">${capitalizeFirst(property.status)}</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div><strong>Type:</strong> ${capitalizeFirst(property.type)}</div>
+                        <div><strong>Bedrooms:</strong> ${property.bedrooms || 'N/A'}</div>
+                        <div><strong>Bathrooms:</strong> ${property.bathrooms || 'N/A'}</div>
+                        <div><strong>Sq Ft:</strong> ${property.squareFeet ? property.squareFeet.toLocaleString() : 'N/A'}</div>
+                    </div>
+                    <p style="color: #666; margin-bottom: 1rem;">${property.description || 'No description available'}</p>
+                    <div>
+                        <button class="btn btn-secondary" onclick="editProperty(${property.id})" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteProperty(${property.id})" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProperties() {
+            const typeFilter = document.getElementById('propertyTypeFilter').value;
+            const statusFilter = document.getElementById('propertyStatusFilter').value;
+            const priceRangeFilter = document.getElementById('priceRangeFilter').value;
+            
+            let filteredProperties = crmData.properties;
+            
+            if (typeFilter) {
+                filteredProperties = filteredProperties.filter(prop => prop.type === typeFilter);
+            }
+            
+            if (statusFilter) {
+                filteredProperties = filteredProperties.filter(prop => prop.status === statusFilter);
+            }
+            
+            if (priceRangeFilter) {
+                const [min, max] = priceRangeFilter.split('-').map(Number);
+                filteredProperties = filteredProperties.filter(prop => 
+                    prop.price >= min && prop.price <= max
+                );
+            }
+            
+            const container = document.getElementById('propertiesContainer');
+            container.innerHTML = filteredProperties.map(property => `
+                <div class="property-card">
+                    <div class="property-header">
+                        <div>
+                            <div class="property-price">${property.price.toLocaleString()}</div>
+                            <div style="color: #666; margin-top: 0.25rem;">${property.address}</div>
+                        </div>
+                        <span class="property-status status-${property.status}">${capitalizeFirst(property.status)}</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        <div><strong>Type:</strong> ${capitalizeFirst(property.type)}</div>
+                        <div><strong>Bedrooms:</strong> ${property.bedrooms || 'N/A'}</div>
+                        <div><strong>Bathrooms:</strong> ${property.bathrooms || 'N/A'}</div>
+                        <div><strong>Sq Ft:</strong> ${property.squareFeet ? property.squareFeet.toLocaleString() : 'N/A'}</div>
+                    </div>
+                    <p style="color: #666; margin-bottom: 1rem;">${property.description || 'No description available'}</p>
+                    <div>
+                        <button class="btn btn-secondary" onclick="editProperty(${property.id})" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteProperty(${property.id})" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAddPropertyModal() {
+            document.getElementById('addPropertyModal').style.display = 'block';
+        }
+
+        function addProperty(propertyData) {
+            const newProperty = {
+                id: Date.now(),
+                ...propertyData,
+                dateAdded: new Date()
+            };
+            crmData.properties.push(newProperty);
+            
+            // Add activity
+            crmData.activities.push({
+                id: Date.now() + 1,
+                type: 'property_added',
+                description: `New property listed at ${newProperty.address}`,
+                timestamp: new Date(),
+                icon: 'fa-home'
+            });
+            
+            displayProperties();
+            updateDashboard();
+            closeModal('addPropertyModal');
+            document.getElementById('addPropertyForm').reset();
+        }
+
+        function editProperty(propertyId) {
+            const property = crmData.properties.find(p => p.id === propertyId);
+            if (property) {
+                document.getElementById('propertyAddress').value = property.address;
+                document.getElementById('propertyPrice').value = property.price;
+                document.getElementById('propertyType').value = property.type;
+                document.getElementById('propertyBedrooms').value = property.bedrooms || '';
+                document.getElementById('propertyBathrooms').value = property.bathrooms || '';
+                document.getElementById('propertySquareFeet').value = property.squareFeet || '';
+                document.getElementById('propertyStatus').value = property.status;
+                document.getElementById('propertyDescription').value = property.description || '';
+                
+                const form = document.getElementById('addPropertyForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    updateProperty(propertyId);
+                };
+                
+                document.querySelector('#addPropertyModal h2').textContent = 'Edit Property';
+                document.querySelector('#addPropertyModal button[type="submit"]').textContent = 'Update Property';
+                document.getElementById('addPropertyModal').style.display = 'block';
+            }
+        }
+
+        function updateProperty(propertyId) {
+            const propertyIndex = crmData.properties.findIndex(p => p.id === propertyId);
+            if (propertyIndex !== -1) {
+                crmData.properties[propertyIndex] = {
+                    ...crmData.properties[propertyIndex],
+                    address: document.getElementById('propertyAddress').value,
+                    price: parseInt(document.getElementById('propertyPrice').value),
+                    type: document.getElementById('propertyType').value,
+                    bedrooms: parseInt(document.getElementById('propertyBedrooms').value) || null,
+                    bathrooms: parseFloat(document.getElementById('propertyBathrooms').value) || null,
+                    squareFeet: parseInt(document.getElementById('propertySquareFeet').value) || null,
+                    status: document.getElementById('propertyStatus').value,
+                    description: document.getElementById('propertyDescription').value
+                };
+                
+                displayProperties();
+                closeModal('addPropertyModal');
+                resetAddPropertyForm();
+            }
+        }
+
+        function deleteProperty(propertyId) {
+            if (confirm('Are you sure you want to delete this property?')) {
+                crmData.properties = crmData.properties.filter(p => p.id !== propertyId);
+                displayProperties();
+                updateDashboard();
+            }
+        }
+
+        function resetAddPropertyForm() {
+            document.getElementById('addPropertyForm').onsubmit = function(e) {
+                e.preventDefault();
+                const propertyData = {
+                    address: document.getElementById('propertyAddress').value,
+                    price: parseInt(document.getElementById('propertyPrice').value),
+                    type: document.getElementById('propertyType').value,
+                    bedrooms: parseInt(document.getElementById('propertyBedrooms').value) || null,
+                    bathrooms: parseFloat(document.getElementById('propertyBathrooms').value) || null,
+                    squareFeet: parseInt(document.getElementById('propertySquareFeet').value) || null,
+                    status: document.getElementById('propertyStatus').value,
+                    description: document.getElementById('propertyDescription').value
+                };
+                addProperty(propertyData);
+            };
+            document.querySelector('#addPropertyModal h2').textContent = 'Add New Property';
+            document.querySelector('#addPropertyModal button[type="submit"]').textContent = 'Add Property';
+        }
+
+        // Lead functions
+        function displayLeads() {
+            const tbody = document.getElementById('leadsTableBody');
+            tbody.innerHTML = crmData.leads.map(lead => `
+                <tr>
+                    <td>${lead.name}</td>
+                    <td>${lead.email}</td>
+                    <td>${lead.phone || 'N/A'}</td>
+                    <td>${lead.interest || 'N/A'}</td>
+                    <td><span class="property-status status-${lead.status}">${capitalizeFirst(lead.status)}</span></td>
+                    <td>${capitalizeFirst(lead.source.replace('-', ' '))}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editLead(${lead.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteLead(${lead.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchLeads() {
+            const searchTerm = document.getElementById('leadSearch').value.toLowerCase();
+            const filteredLeads = crmData.leads.filter(lead => 
+                lead.name.toLowerCase().includes(searchTerm) ||
+                lead.email.toLowerCase().includes(searchTerm) ||
+                (lead.phone && lead.phone.includes(searchTerm)) ||
+                (lead.interest && lead.interest.toLowerCase().includes(searchTerm))
+            );
+            
+            const tbody = document.getElementById('leadsTableBody');
+            tbody.innerHTML = filteredLeads.map(lead => `
+                <tr>
+                    <td>${lead.name}</td>
+                    <td>${lead.email}</td>
+                    <td>${lead.phone || 'N/A'}</td>
+                    <td>${lead.interest || 'N/A'}</td>
+                    <td><span class="property-status status-${lead.status}">${capitalizeFirst(lead.status)}</span></td>
+                    <td>${capitalizeFirst(lead.source.replace('-', ' '))}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editLead(${lead.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteLead(${lead.id})" style="padding: 0.25rem 0.5rem; margin: 0.1rem;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddLeadModal() {
+            document.getElementById('addLeadModal').style.display = 'block';
+        }
+
+        function addLead(leadData) {
+            const newLead = {
+                id: Date.now(),
+                ...leadData,
+                dateAdded: new Date()
+            };
+            crmData.leads.push(newLead);
+            
+            // Add activity
+            crmData.activities.push({
+                id: Date.now() + 1,
+                type: 'lead_added',
+                description: `New lead ${newLead.name} added`,
+                timestamp: new Date(),
+                icon: 'fa-chart-line'
+            });
+            
+            displayLeads();
+            updateDashboard();
+            closeModal('addLeadModal');
+            document.getElementById('addLeadForm').reset();
+        }
+
+        function editLead(leadId) {
+            const lead = crmData.leads.find(l => l.id === leadId);
+            if (lead) {
+                document.getElementById('leadName').value = lead.name;
+                document.getElementById('leadEmail').value = lead.email;
+                document.getElementById('leadPhone').value = lead.phone || '';
+                document.getElementById('leadInterest').value = lead.interest || '';
+                document.getElementById('leadBudget').value = lead.budget || '';
+                document.getElementById('leadStatus').value = lead.status;
+                document.getElementById('leadSource').value = lead.source;
+                document.getElementById('leadNotes').value = lead.notes || '';
+                
+                const form = document.getElementById('addLeadForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    updateLead(leadId);
+                };
+                
+                document.querySelector('#addLeadModal h2').textContent = 'Edit Lead';
+                document.querySelector('#addLeadModal button[type="submit"]').textContent = 'Update Lead';
+                document.getElementById('addLeadModal').style.display = 'block';
+            }
+        }
+
+        function updateLead(leadId) {
+            const leadIndex = crmData.leads.findIndex(l => l.id === leadId);
+            if (leadIndex !== -1) {
+                crmData.leads[leadIndex] = {
+                    ...crmData.leads[leadIndex],
+                    name: document.getElementById('leadName').value,
+                    email: document.getElementById('leadEmail').value,
+                    phone: document.getElementById('leadPhone').value,
+                    interest: document.getElementById('leadInterest').value,
+                    budget: parseInt(document.getElementById('leadBudget').value) || null,
+                    status: document.getElementById('leadStatus').value,
+                    source: document.getElementById('leadSource').value,
+                    notes: document.getElementById('leadNotes').value
+                };
+                
+                displayLeads();
+                closeModal('addLeadModal');
+                resetAddLeadForm();
+            }
+        }
+
+        function deleteLead(leadId) {
+            if (confirm('Are you sure you want to delete this lead?')) {
+                crmData.leads = crmData.leads.filter(l => l.id !== leadId);
+                displayLeads();
+                updateDashboard();
+            }
+        }
+
+        function resetAddLeadForm() {
+            document.getElementById('addLeadForm').onsubmit = function(e) {
+                e.preventDefault();
+                const leadData = {
+                    name: document.getElementById('leadName').value,
+                    email: document.getElementById('leadEmail').value,
+                    phone: document.getElementById('leadPhone').value,
+                    interest: document.getElementById('leadInterest').value,
+                    budget: parseInt(document.getElementById('leadBudget').value) || null,
+                    status: document.getElementById('leadStatus').value,
+                    source: document.getElementById('leadSource').value,
+                    notes: document.getElementById('leadNotes').value
+                };
+                addLead(leadData);
+            };
+            document.querySelector('#addLeadModal h2').textContent = 'Add New Lead';
+            document.querySelector('#addLeadModal button[type="submit"]').textContent = 'Add Lead';
+        }
+
+        // Reports functions
+        function updateReports() {
+            const soldProperties = crmData.properties.filter(prop => prop.status === 'sold');
+            const totalSales = soldProperties.reduce((total, prop) => total + prop.price, 0);
+            const avgSalePrice = soldProperties.length > 0 ? totalSales / soldProperties.length : 0;
+            
+            const convertedLeads = crmData.leads.filter(lead => lead.status === 'converted').length;
+            const conversionRate = crmData.leads.length > 0 ? (convertedLeads / crmData.leads.length * 100).toFixed(1) : 0;
+            
+            document.getElementById('totalSales').textContent = `${totalSales.toLocaleString()}`;
+            document.getElementById('avgSalePrice').textContent = `${Math.round(avgSalePrice).toLocaleString()}`;
+            document.getElementById('propertiesSold').textContent = soldProperties.length;
+            document.getElementById('conversionRate').textContent = `${conversionRate}%`;
+            
+            // Generate property type chart
+            generatePropertyTypeChart();
+            generateMonthlyChart();
+        }
+
+        function generatePropertyTypeChart() {
+            const typeCount = {};
+            crmData.properties.forEach(prop => {
+                typeCount[prop.type] = (typeCount[prop.type] || 0) + 1;
+            });
+            
+            const container = document.getElementById('propertyTypeChart');
+            const total = Object.values(typeCount).reduce((sum, count) => sum + count, 0);
+            
+            if (total === 0) {
+                container.innerHTML = '<p>No property data available</p>';
+                return;
+            }
+            
+            container.innerHTML = Object.entries(typeCount).map(([type, count]) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <span>${capitalizeFirst(type)}</span>
+                        <div style="flex-grow: 1; margin: 0 1rem;">
+                            <div style="background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(135deg, #667eea, #764ba2); height: 100%; width: ${percentage}%; transition: width 0.5s ease;"></div>
+                            </div>
+                        </div>
+                        <span>${count} (${percentage}%)</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function generateMonthlyChart() {
+            const monthlyData = {};
+            const currentDate = new Date();
+            
+            // Initialize last 6 months
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+                const monthKey = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                monthlyData[monthKey] = { properties: 0, leads: 0, sales: 0 };
+            }
+            
+            // Count properties added by month
+            crmData.properties.forEach(prop => {
+                const monthKey = prop.dateAdded.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                if (monthlyData[monthKey]) {
+                    monthlyData[monthKey].properties++;
+                    if (prop.status === 'sold') {
+                        monthlyData[monthKey].sales++;
+                    }
+                }
+            });
+            
+            // Count leads added by month
+            crmData.leads.forEach(lead => {
+                const monthKey = lead.dateAdded.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                if (monthlyData[monthKey]) {
+                    monthlyData[monthKey].leads++;
+                }
+            });
+            
+            const container = document.getElementById('monthlyChart');
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                    ${Object.entries(monthlyData).map(([month, data]) => `
+                        <div style="text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+                            <h4 style="margin-bottom: 0.5rem; color: #667eea;">${month}</h4>
+                            <div style="font-size: 0.9rem; color: #666;">
+                                <div>Properties: ${data.properties}</div>
+                                <div>Leads: ${data.leads}</div>
+                                <div>Sales: ${data.sales}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Utility functions
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Form event listeners
+        document.getElementById('addClientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const clientData = {
+                name: document.getElementById('clientName').value,
+                email: document.getElementById('clientEmail').value,
+                phone: document.getElementById('clientPhone').value,
+                type: document.getElementById('clientType').value,
+                status: document.getElementById('clientStatus').value,
+                notes: document.getElementById('clientNotes').value
+            };
+            addClient(clientData);
+        });
+
+        document.getElementById('addPropertyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const propertyData = {
+                address: document.getElementById('propertyAddress').value,
+                price: parseInt(document.getElementById('propertyPrice').value),
+                type: document.getElementById('propertyType').value,
+                bedrooms: parseInt(document.getElementById('propertyBedrooms').value) || null,
+                bathrooms: parseFloat(document.getElementById('propertyBathrooms').value) || null,
+                squareFeet: parseInt(document.getElementById('propertySquareFeet').value) || null,
+                status: document.getElementById('propertyStatus').value,
+                description: document.getElementById('propertyDescription').value
+            };
+            addProperty(propertyData);
+        });
+
+        document.getElementById('addLeadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const leadData = {
+                name: document.getElementById('leadName').value,
+                email: document.getElementById('leadEmail').value,
+                phone: document.getElementById('leadPhone').value,
+                interest: document.getElementById('leadInterest').value,
+                budget: parseInt(document.getElementById('leadBudget').value) || null,
+                status: document.getElementById('leadStatus').value,
+                source: document.getElementById('leadSource').value,
+                notes: document.getElementById('leadNotes').value
+            };
+            addLead(leadData);
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(e) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSampleData();
+        });
+    </script>
+</body>
+</html>
